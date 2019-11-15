@@ -8,6 +8,8 @@ public class OutputDisplay : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI _outputRenderer, _positionRenderer;
 
+    private List<string> _results = new List<string>();
+
     #region Button Inputs
     public void NextBtnPressed()
     {
@@ -21,4 +23,9 @@ public class OutputDisplay : MonoBehaviour
         throw new NotImplementedException();
     }
     #endregion
+
+    public void DisplayResults(List<string> results)
+    {
+        // TODO Build result display
+    }
 }
