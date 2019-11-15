@@ -1,0 +1,36 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class RookPiece : ChessPiece
+{
+    public override List<Vector2Int> DetermineAreaOfAttack()
+    {
+        List<Vector2Int> result = new List<Vector2Int>();
+
+        // The Horizontal
+        for(int x = 0; x < BoardSize.x; x++)
+        {
+            if(x != Location.x)
+            {
+                result.Add(new Vector2Int(x, Location.y));
+            }
+        }
+
+        // The Vertical
+        for (int y = 0; y < BoardSize.y; y++)
+        {
+            if (y != Location.y)
+            {
+                result.Add(new Vector2Int(Location.x, y));
+            }
+        }
+
+        return result;
+    }
+
+    public override string GetPieceSymbol()
+    {
+        return "R";
+    }
+}
