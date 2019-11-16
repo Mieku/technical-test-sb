@@ -98,9 +98,10 @@ public class SystemUI : MonoBehaviour
         int.TryParse(_rookInput.text, out int numRook);
         int.TryParse(_knightInput.text, out int numKnight);
 
+        Vector2Int boardSize = new Vector2Int(horCells, vertCells);
+
         ChessPieceCalculator calculator = new ChessPieceCalculator(
-            horCells,
-            vertCells,
+            boardSize,
             numKing,
             numQueen,
             numBishop,

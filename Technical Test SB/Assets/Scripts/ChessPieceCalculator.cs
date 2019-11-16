@@ -1,17 +1,19 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ChessPieceCalculator : MonoBehaviour
 {
-    private int _horizontalCells, _verticalCells;
+    private Vector2Int _boardSize;
     private int _numKing, _numQueen, _numBishop, _numRook, _numKnight;
     private List<string> _results = new List<string>();
 
-    public ChessPieceCalculator(int horCells, int vertCells, int numKing, int numQueen, int numBishop, int numRook, int numKnight)
+    private DateTime _startTime;
+
+    public ChessPieceCalculator(Vector2Int boardSize, int numKing, int numQueen, int numBishop, int numRook, int numKnight)
     {
-        _horizontalCells = horCells;
-        _verticalCells = vertCells;
+        _boardSize = boardSize;
         _numKing = numKing;
         _numQueen = numQueen;
         _numBishop = numBishop;
@@ -21,8 +23,60 @@ public class ChessPieceCalculator : MonoBehaviour
 
     public List<string> CalculateResults()
     {
+        _startTime = DateTime.Now;
         // TODO: Build the calculator
+        List<ChessPiece> chessPieces = GenerateChessPieces();
 
+
+        DisplayProcessingTime();
         return _results;
+    }
+
+    private List<ChessPiece> GenerateChessPieces()
+    {
+        List<ChessPiece> result = new List<ChessPiece>();
+        // King
+        for(int i = 0; i < _numKing; i++)
+        {
+            KingPiece newPiece = new KingPiece();
+            newPiece.BoardSize = _boardSize;
+            result.Add(newPiece);
+        }
+        // Queen
+        for (int i = 0; i < _numKing; i++)
+        {
+            QueenPiece newPiece = new QueenPiece();
+            newPiece.BoardSize = _boardSize;
+            result.Add(newPiece);
+        }
+        // Bishop
+        for (int i = 0; i < _numKing; i++)
+        {
+            BishopPiece newPiece = new BishopPiece();
+            newPiece.BoardSize = _boardSize;
+            result.Add(newPiece);
+        }
+        // Rook
+        for (int i = 0; i < _numKing; i++)
+        {
+            RookPiece newPiece = new RookPiece();
+            newPiece.BoardSize = _boardSize;
+            result.Add(newPiece);
+        }
+        // Knight
+        for (int i = 0; i < _numKing; i++)
+        {
+            KnightPiece newPiece = new KnightPiece();
+            newPiece.BoardSize = _boardSize;
+            result.Add(newPiece);
+        }
+
+        return result;
+    }
+
+    private void DisplayProcessingTime()
+    {
+        TimeSpan processingTime = DateTime.Now - _startTime;
+        print("Processing time: " + processingTime.TotalMilliseconds + "ms");
     }
 }
