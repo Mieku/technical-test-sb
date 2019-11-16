@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BishopPiece : ChessPiece
 {
-    public override List<Vector2Int> DetermineAreaOfAttack()
+    public override List<Vector2Int> DetermineAreaOfAttack(Vector2Int location)
     {
         List<Vector2Int> result = new List<Vector2Int>();
 
@@ -13,10 +13,10 @@ public class BishopPiece : ChessPiece
 
         for (int i = 1; i <= longestLengthPossible; i++)
         {
-            result.Add(new Vector2Int(Location.x + i, Location.y + i)); // SE
-            result.Add(new Vector2Int(Location.x - i, Location.y - i)); // NW
-            result.Add(new Vector2Int(Location.x + i, Location.y - i)); // NE
-            result.Add(new Vector2Int(Location.x - i, Location.y + i)); // SW
+            result.Add(new Vector2Int(location.x + i, location.y + i)); // SE
+            result.Add(new Vector2Int(location.x - i, location.y - i)); // NW
+            result.Add(new Vector2Int(location.x + i, location.y - i)); // NE
+            result.Add(new Vector2Int(location.x - i, location.y + i)); // SW
         }
 
         // Trims out the out of bounds values that exit the grid

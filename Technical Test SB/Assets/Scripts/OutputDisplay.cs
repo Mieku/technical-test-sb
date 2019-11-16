@@ -24,8 +24,23 @@ public class OutputDisplay : MonoBehaviour
     }
     #endregion
 
-    public void DisplayResults(List<string[][]> results)
+    public void DisplayResults(List<string[,]> results)
     {
         // TODO Build result display
+        foreach(string[,] board in results)
+        {
+            string msg = "";
+            for (int x = 0; x < board.GetLength(0); x++)
+            {
+                for(int y = 0; y < board.GetLength(1); y++)
+                {
+                    string result = board[x, y];
+                    if (result == null) result = "";
+                    msg += "[" + board[x, y] + "]";
+                }
+                msg += '\n';
+            }
+            print(msg);
+        }
     }
 }

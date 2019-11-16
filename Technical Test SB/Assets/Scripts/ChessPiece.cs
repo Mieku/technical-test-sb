@@ -4,10 +4,9 @@ using UnityEngine;
 
 public abstract class ChessPiece : MonoBehaviour
 {
-    public Vector2Int Location { get; set; }
     public Vector2Int BoardSize { get; set; }
 
-    public abstract List<Vector2Int> DetermineAreaOfAttack();
+    public abstract List<Vector2Int> DetermineAreaOfAttack(Vector2Int location);
     public abstract string GetPieceSymbol();
 
     // This trims out cells that are outside of the grid
@@ -28,12 +27,12 @@ public abstract class ChessPiece : MonoBehaviour
         return trimmedAttacks;
     }
 
-    public bool CheckIfPieceDangersOthers(string[][] board, Vector2Int location)
+    public bool CheckIfPieceDangersOthers(string[,] board, Vector2Int location)
     {
-        List<Vector2Int> areaOfAttack = DetermineAreaOfAttack();
+        List<Vector2Int> areaOfAttack = DetermineAreaOfAttack(location);
         foreach(Vector2Int cellPos in areaOfAttack)
         {
-            if(!board[cellPos.x][cellPos.y].Equals("") || !board[cellPos.x][cellPos.y].Equals("X"))
+            if(board[cellPos.x, cellPos.y] != null && !board[cellPos.x, cellPos.y].Equals("X"))
             {
                 return true;
             }
@@ -43,18 +42,18 @@ public abstract class ChessPiece : MonoBehaviour
     }
 
     // This places the piece on the board, and telegraphs the danger areas with an X
-    public string[][] PlacePiece(string[][] curBoard, Vector2Int location)
+    public string[,] PlacePiece(string[,] curBoard, Vector2Int location)
     {
-        string[][] result = curBoard;
+        string[,] result = (string[,])curBoard.Clone();
         
         // Placing Piece
-        result[location.x][location.y] = GetPieceSymbol();
+        result[location.x, location.y] = GetPieceSymbol();
 
         // Telegraphing danger area
-        List<Vector2Int> areaOfAttack = DetermineAreaOfAttack();
+        List<Vector2Int> areaOfAttack = DetermineAreaOfAttack(location);
         foreach(Vector2Int dangerCell in areaOfAttack)
         {
-            result[dangerCell.x][dangerCell.y] = "X";
+            result[dangerCell.x, dangerCell.y] = "X";
         }
 
         return result;
