@@ -27,4 +27,36 @@ public abstract class ChessPiece : MonoBehaviour
 
         return trimmedAttacks;
     }
+
+    public bool CheckIfPieceDangersOthers(string[][] board, Vector2Int location)
+    {
+        List<Vector2Int> areaOfAttack = DetermineAreaOfAttack();
+        foreach(Vector2Int cellPos in areaOfAttack)
+        {
+            if(!board[cellPos.x][cellPos.y].Equals("") || !board[cellPos.x][cellPos.y].Equals("X"))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // This places the piece on the board, and telegraphs the danger areas with an X
+    public string[][] PlacePiece(string[][] curBoard, Vector2Int location)
+    {
+        string[][] result = curBoard;
+        
+        // Placing Piece
+        result[location.x][location.y] = GetPieceSymbol();
+
+        // Telegraphing danger area
+        List<Vector2Int> areaOfAttack = DetermineAreaOfAttack();
+        foreach(Vector2Int dangerCell in areaOfAttack)
+        {
+            result[dangerCell.x][dangerCell.y] = "X";
+        }
+
+        return result;
+    }
 }

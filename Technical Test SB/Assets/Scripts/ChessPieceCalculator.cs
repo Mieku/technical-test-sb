@@ -7,7 +7,7 @@ public class ChessPieceCalculator : MonoBehaviour
 {
     private Vector2Int _boardSize;
     private int _numKing, _numQueen, _numBishop, _numRook, _numKnight;
-    private List<string> _results = new List<string>();
+    private List<string[][]> _results = new List<string[][]>();
 
     private DateTime _startTime;
 
@@ -21,11 +21,24 @@ public class ChessPieceCalculator : MonoBehaviour
         _numKnight = numKnight;
     }
 
-    public List<string> CalculateResults()
+    /*
+     * My Approach:
+     * - Foreach of the cells in the grid
+     *      * Create a new grid with that piece placed
+     *      * Have that piece indicate its dangerzones
+     *      - Foreach of the non-danger and not taken cells
+     *          * Check if the current piece's dangerzone overlaps a piece, if so abort.
+     *          * Create a grid with the piece placed
+     *      [Repeat until all pieces are placed, then store the board]
+     */
+    public List<string[][]> CalculateResults()
     {
         _startTime = DateTime.Now;
+
         // TODO: Build the calculator
         List<ChessPiece> chessPieces = GenerateChessPieces();
+
+
 
 
         DisplayProcessingTime();
