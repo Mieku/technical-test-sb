@@ -23,6 +23,7 @@ public class SystemUI : MonoBehaviour
 
     private const string NEG_INPUT_ERROR_MSG = "You can not have negative pieces";
     private const string CELL_INPUT_ERROR_MSG = "Your cell values must be greater than 0";
+    private const string CELL_INPUT_LARGE_WARNING = "Large cell values can result in long calculation times";
 
     private bool _inputIsSafe;
 
@@ -48,7 +49,6 @@ public class SystemUI : MonoBehaviour
          * 
          * Display an error message if there is an error
         */
-
         _errorRenderer.text = ""; // Resetting error msg
         _inputIsSafe = true;
 
@@ -83,7 +83,11 @@ public class SystemUI : MonoBehaviour
         {
             _errorRenderer.text = CELL_INPUT_ERROR_MSG;
             _inputIsSafe = false;
+        } else if(inputValue > 6)
+        {
+            _errorRenderer.text = CELL_INPUT_LARGE_WARNING;
         }
+
     }
     #endregion
 
