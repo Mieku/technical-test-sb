@@ -119,18 +119,13 @@ public class OutputDisplay : MonoBehaviour
     {
         // Clear currently displayed pieces
         _displayedPieces.ForEach(Destroy);
-        int alternatingIndex = 0;
 
         foreach(var pieceCode in pieceCodes)
         {
-            alternatingIndex++;
             GameObject piece = Instantiate(_pieceGOPrefab, _outputGridHandle);
             ChessPieceRenderer pieceScript = piece.GetComponent<ChessPieceRenderer>();
             pieceScript.SetPieceDisplay(pieceCode);
             _displayedPieces.Add(piece);
-
-            // I'd like the tiles to alternate in colour, so using modulus to quickly do this
-            pieceScript.SetTileColour(alternatingIndex % 2 == 0);
         }
     } 
 }

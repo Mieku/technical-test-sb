@@ -5,10 +5,9 @@ using UnityEngine.UI;
 
 public class ChessPieceRenderer : MonoBehaviour
 {
-    [SerializeField] Image _pieceRenderer, _tileRenderer;
+    [SerializeField] Image _pieceRenderer;
 
     [SerializeField] Sprite _kingSpr, _queenSpr, _bishopSpr, _rookSpr, _knightSpr;
-    [SerializeField] Color _lightTileColour, _darkTileColour;
 
     public void SetPieceDisplay(string pieceCode)
     {
@@ -20,17 +19,6 @@ public class ChessPieceRenderer : MonoBehaviour
         {
             _pieceRenderer.enabled = true;
             _pieceRenderer.sprite = pieceSprite;
-        }
-    }
-
-    public void SetTileColour(bool isEven)
-    {
-        if(isEven)
-        {
-            _tileRenderer.color = _lightTileColour;
-        } else
-        {
-            _tileRenderer.color = _darkTileColour;
         }
     }
 
