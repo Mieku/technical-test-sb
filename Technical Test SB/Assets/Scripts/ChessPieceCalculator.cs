@@ -36,37 +36,30 @@ public class ChessPieceCalculator : MonoBehaviour
 
     private void DetermineResults(string[,] possibleBoard, Stack<ChessPiece> remainingPieces)
     {
-        /*
-         * My Approach:
-         * - Ensure their are pieces left to place, if not you have a correct output! Log it and leave!
-         * - Else, Grab the next chess piece
-         * - Determine all the locations it can safely be placed, keep track
-         * - If there are no locations it can be placed, leave this iteration this specific board placement is impossible
-         * - Else, for each of the possible locations recursively repeat this approach until all pieces are placed or they 
-         *      discover no other pieces can safely be placed.
-         */
-
         Stack<ChessPiece> curPieces = new Stack<ChessPiece>(remainingPieces);
         // Check if any pieces are left, if not store board
-        if(curPieces.Count == 0)
+        if (curPieces.Count == 0)
         {
             _results.Add(possibleBoard);
             return;
         }
-        // If there is a piece left, grab it
+
+        // Grab piece
         ChessPiece piece = curPieces.Pop();
-        // Try to place piece
-        List<string[,]> allBoardsWherePlaced = GetAllBoardsWherePieceCanFit(possibleBoard, piece);
-        // No luck, leave iteration
-        if (allBoardsWherePlaced == null)
+
+        // Go through each cell, 
+        for (int x = 0; x < possibleBoard.GetLength(0); x++)
         {
-            return;
-        }
-        
-        // If places are found, recursively dig deeper into the possibilities
-        foreach(var board in allBoardsWherePlaced)
-        {
-            DetermineResults(board, curPieces);
+            for (int y = 0; y < possibleBoard.GetLength(1); y++)
+            {
+                Vector2Int location = new Vector2Int(x, y);
+                if (possibleBoard[x, y] == null
+                    && !piece.CheckIfPieceDangersOthers(possibleBoard, location))
+                {
+                    string[,] newBoard = piece.PlacePiece(possibleBoard, location);
+                    DetermineResults(newBoard, curPieces);
+                }
+            }
         }
     }
 
@@ -141,6 +134,6 @@ public class ChessPieceCalculator : MonoBehaviour
     private void DisplayProcessingTime()
     {
         TimeSpan processingTime = DateTime.Now - _startTime;
-        print("Processing time: " + processingTime.TotalMilliseconds + "ms");
+        print("Processing time: " + processingTime.TotalSeconds + "s");
     }
 }
