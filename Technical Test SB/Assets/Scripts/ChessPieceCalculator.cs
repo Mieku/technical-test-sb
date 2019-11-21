@@ -28,72 +28,71 @@ public class ChessPieceCalculator : MonoBehaviour
         Stack<ChessPiece> chessPieces = GenerateChessPieces();
         string[,] board = new string[_boardSize.x, _boardSize.y];
 
-        DetermineResults(board, chessPieces);
+        DetermineResults(board, chessPieces, new Vector2Int(0, 0));
 
         DisplayProcessingTime();
         return _results;
     }
 
-    private void DetermineResults(string[,] possibleBoard, Stack<ChessPiece> remainingPieces)
+    private void DetermineResults(string[,] board, Stack<ChessPiece> remainingPieces, Vector2Int location)
     {
         Stack<ChessPiece> curPieces = new Stack<ChessPiece>(remainingPieces);
+
         // Check if any pieces are left, if not store board
-        if (curPieces.Count == 0)
+        if (remainingPieces.Count == 0)
         {
-            _results.Add(possibleBoard);
+            _results.Add(board);
+
             return;
         }
 
-        // Grab piece
+        // Grab next piece
         ChessPiece piece = curPieces.Pop();
 
-        // Go through each cell, 
-        for (int x = 0; x < possibleBoard.GetLength(0); x++)
+        // Run this until you hit the end of the board
+        while (location.x != -1 || location.y != -1) // End Indicator
         {
-            for (int y = 0; y < possibleBoard.GetLength(1); y++)
+            // If a piece can be placed here
+            if (board[location.x, location.y] == null && !piece.CheckIfPieceDangersOthers(board, location))
             {
-                Vector2Int location = new Vector2Int(x, y);
-                if (possibleBoard[x, y] == null
-                    && !piece.CheckIfPieceDangersOthers(possibleBoard, location))
-                {
-                    string[,] newBoard = piece.PlacePiece(possibleBoard, location);
-                    DetermineResults(newBoard, curPieces);
-                }
+                // Place the piece on the board
+                string[,] newBoard = piece.PlacePiece(board, location);
+
+                // Continue on recursively
+                DetermineResults(newBoard, curPieces, Vector2Int.zero);
             }
+
+            // Carry on to the next location
+            location = IncrementLocation(location);
         }
+
+        return;
     }
 
-    private List<string[,]> GetAllBoardsWherePieceCanFit(string[,] board, ChessPiece piece)
+    // This just allows for an easy way to increment to the next cell of the grid
+    private Vector2Int IncrementLocation(Vector2Int location)
     {
-        List<string[,]> possibleBoards = new List<string[,]>();
-        for(int x = 0; x < board.GetLength(0); x++)
+        Vector2Int result;
+        if (location.x + 1 < _boardSize.x)
         {
-            for(int y = 0; y < board.GetLength(1); y++)
-            {
-                if(board[x,y] == null) // Empty spot
-                {
-                    // Checks its own telegraph of attack to ensure it doesnt hit others
-                    if (!piece.CheckIfPieceDangersOthers(board, new Vector2Int(x,y))) 
-                    {
-                        // If all good, store this as a potential board to continue with
-                        string[,] newBoard = piece.PlacePiece(board, new Vector2Int(x, y));
-                        possibleBoards.Add(newBoard);
-                    }
-                }
-            }
+            result = new Vector2Int(location.x + 1, location.y);
         }
-
-        // If there are no possibilities, dump it!
-        if (possibleBoards.Count == 0) return null;
-
-        return possibleBoards;
+        else if (location.y + 1 < _boardSize.y)
+        {
+            result = new Vector2Int(0, location.y + 1);
+        }
+        else
+        {
+            result = new Vector2Int(-1, -1); // End Indicator
+        }
+        return result;
     }
 
     private Stack<ChessPiece> GenerateChessPieces()
     {
         Stack<ChessPiece> result = new Stack<ChessPiece>();
         // King
-        for(int i = 0; i < _numKing; i++)
+        for (int i = 0; i < _numKing; i++)
         {
             KingPiece newPiece = new KingPiece();
             newPiece.BoardSize = _boardSize;
