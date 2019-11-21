@@ -28,79 +28,71 @@ public class ChessPieceCalculator : MonoBehaviour
         Stack<ChessPiece> chessPieces = GenerateChessPieces();
         string[,] board = new string[_boardSize.x, _boardSize.y];
 
-        DetermineResults(board, chessPieces);
+        DetermineResults(board, chessPieces, new Vector2Int(0, 0));
 
         DisplayProcessingTime();
         return _results;
     }
 
-    private void DetermineResults(string[,] possibleBoard, Stack<ChessPiece> remainingPieces)
+    private void DetermineResults(string[,] board, Stack<ChessPiece> remainingPieces, Vector2Int location)
     {
-        /*
-         * My Approach:
-         * - Ensure their are pieces left to place, if not you have a correct output! Log it and leave!
-         * - Else, Grab the next chess piece
-         * - Determine all the locations it can safely be placed, keep track
-         * - If there are no locations it can be placed, leave this iteration this specific board placement is impossible
-         * - Else, for each of the possible locations recursively repeat this approach until all pieces are placed or they 
-         *      discover no other pieces can safely be placed.
-         */
-
         Stack<ChessPiece> curPieces = new Stack<ChessPiece>(remainingPieces);
+
         // Check if any pieces are left, if not store board
-        if(curPieces.Count == 0)
+        if (remainingPieces.Count == 0)
         {
-            _results.Add(possibleBoard);
+            _results.Add(board);
+
             return;
         }
-        // If there is a piece left, grab it
+
+        // Grab next piece
         ChessPiece piece = curPieces.Pop();
-        // Try to place piece
-        List<string[,]> allBoardsWherePlaced = GetAllBoardsWherePieceCanFit(possibleBoard, piece);
-        // No luck, leave iteration
-        if (allBoardsWherePlaced == null)
+
+        // Run this until you hit the end of the board
+        while (location.x != -1 || location.y != -1) // End Indicator
         {
-            return;
+            // If a piece can be placed here
+            if (board[location.x, location.y] == null && !piece.CheckIfPieceDangersOthers(board, location))
+            {
+                // Place the piece on the board
+                string[,] newBoard = piece.PlacePiece(board, location);
+
+                // Continue on recursively
+                DetermineResults(newBoard, curPieces, Vector2Int.zero);
+            }
+
+            // Carry on to the next location
+            location = IncrementLocation(location);
         }
-        
-        // If places are found, recursively dig deeper into the possibilities
-        foreach(var board in allBoardsWherePlaced)
-        {
-            DetermineResults(board, curPieces);
-        }
+
+        return;
     }
 
-    private List<string[,]> GetAllBoardsWherePieceCanFit(string[,] board, ChessPiece piece)
+    // This just allows for an easy way to increment to the next cell of the grid
+    private Vector2Int IncrementLocation(Vector2Int location)
     {
-        List<string[,]> possibleBoards = new List<string[,]>();
-        for(int x = 0; x < board.GetLength(0); x++)
+        Vector2Int result;
+        if (location.x + 1 < _boardSize.x)
         {
-            for(int y = 0; y < board.GetLength(1); y++)
-            {
-                if(board[x,y] == null) // Empty spot
-                {
-                    // Checks its own telegraph of attack to ensure it doesnt hit others
-                    if (!piece.CheckIfPieceDangersOthers(board, new Vector2Int(x,y))) 
-                    {
-                        // If all good, store this as a potential board to continue with
-                        string[,] newBoard = piece.PlacePiece(board, new Vector2Int(x, y));
-                        possibleBoards.Add(newBoard);
-                    }
-                }
-            }
+            result = new Vector2Int(location.x + 1, location.y);
         }
-
-        // If there are no possibilities, dump it!
-        if (possibleBoards.Count == 0) return null;
-
-        return possibleBoards;
+        else if (location.y + 1 < _boardSize.y)
+        {
+            result = new Vector2Int(0, location.y + 1);
+        }
+        else
+        {
+            result = new Vector2Int(-1, -1); // End Indicator
+        }
+        return result;
     }
 
     private Stack<ChessPiece> GenerateChessPieces()
     {
         Stack<ChessPiece> result = new Stack<ChessPiece>();
         // King
-        for(int i = 0; i < _numKing; i++)
+        for (int i = 0; i < _numKing; i++)
         {
             KingPiece newPiece = new KingPiece();
             newPiece.BoardSize = _boardSize;
@@ -141,6 +133,6 @@ public class ChessPieceCalculator : MonoBehaviour
     private void DisplayProcessingTime()
     {
         TimeSpan processingTime = DateTime.Now - _startTime;
-        print("Processing time: " + processingTime.TotalMilliseconds + "ms");
+        print("Processing time: " + processingTime.TotalSeconds + "s");
     }
 }
